@@ -4,10 +4,10 @@
 # LDmergeFM
 
 This script contains an implementation in R of a weighted average
-procedure to generate consensus LD matrices from multiple single-cohort
-[LDSTORE](http://www.christianbenner.com/) files. Together with
-[FINEMAP](https://doi.org/10.1093/bioinformatics/btw018), it has been
-used in the generation of the
+procedure to generate consensus locus-specific LD matrices from multiple
+single-cohort [LDSTORE](http://www.christianbenner.com/) files. Together
+with [FINEMAP](https://doi.org/10.1093/bioinformatics/btw018), it has
+been used in the generation of the
 [PGC3-SCZ](https://doi.org/10.1101/2020.09.12.20192922) fine-mapping
 results.
 
@@ -30,8 +30,12 @@ calculated, present in all of the input files:
 | Filename                | Contents                                                                                                                                                    |
 | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `$LOCUS.ref`            | Two column whitespace-delimited file. **Column 1:** SNP name. **Column 2:** Effect allele. Equivalent to columns 1 and 4 of a `FINEMAP` .z file. No header. |
-| `$COHORT_$LOCUS.fam`    | 1x `PLINK v1.07+` .fam file for each cohort being analysed.                                                                                                 |
+| `$COHORT_$LOCUS.fam`    | 1x `PLINK v1.07+` .fam file for each cohort being analysed (with case/control phenotype).                                                                   |
 | `$COHORT_$LOCUS.cor.gz` | 1x `LDSTORE v1.1` .cor file (compressed output of *–table* flag) for each cohort being analysed.                                                            |
+
+Single-cohort names (`$COHORT`) should be unique but can contain any
+non-whitespace characters. Note the underscore ("\_") separation with
+`$LOCUS`.
 
 ## Output files
 
@@ -47,8 +51,8 @@ The `./test/` folder contains some simulated input/output files that can be used
 
 ## Notes
 
-`LDmergeFM` has not been tested with correlation files from `LDSTORE
-v2+`, please conduct a test run before using these in important
+`LDmergeFM` has not been tested with correlation table file from
+`LDSTORE v2+`, please conduct a test run before using these in important
 analyses.
 
 `LDmergeFM` can work with an arbitrary number of input matrices but in
@@ -59,9 +63,9 @@ check `.log` files to make sure the computation of the consensus LD
 matrix has used all available data.
 
 `LDmergeFM` is not ancestry-aware. If ancestry-specific consensus
-matrices are desired (e.g. for trans-ancestry fine-mapping purposes) the
-user should run the script separately for each group of single-ancestry
-`LDSTORE` inputs.
+matrices are needed (e.g. for trans-ancestry fine-mapping purposes) you
+should run the script separately for each group of single-ancestry
+inputs.
 
 ## Citation
 
