@@ -22,37 +22,88 @@ and [Matrix](https://cran.r-project.org/web/packages/Matrix/index.html)
 packages to be available for your local R installation. It is designed
 to be run from the command-line as:
 
-    Rscript --vanilla LDmergeFM.R $LOCUS
+    Rscript --vanilla LDmergeFM.R $LOCUS $COR_FORMAT $ESS_FORMULA 
 
-Where `$LOCUS` is the locus identifier for the LD matrix being
-calculated, present in all of the input files:
+Where the argument `$LOCUS` is the locus identifier for the LD matrix
+being calculated, present in all of the input files:
 
-| Filename                | Contents                                                                                                                                                    |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `$LOCUS.ref`            | Two column whitespace-delimited file. **Column 1:** SNP name. **Column 2:** Effect allele. Equivalent to columns 1 and 4 of a `FINEMAP` .z file. No header. |
-| `$COHORT_$LOCUS.fam`    | 1x `PLINK v1.07+` .fam file for each cohort being analysed (with case/control phenotype).                                                                   |
-| `$COHORT_$LOCUS.cor.gz` | 1x `LDSTORE v1.1` .cor file (compressed output of *–table* flag) for each cohort being analysed.                                                            |
+| Filename                | Contents                                                                                                                                                                                                                                                     |
+|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `$LOCUS.ref`            | Two-column whitespace-delimited file. **Column 1:** SNP name. **Column 2:** Effect allele. Equivalent to columns 1 and 4 of a `FINEMAP` .z file. No header.                                                                                                  |
+| `$COHORT_$LOCUS.fam`    | 1x `PLINK v1.07+` .fam file for each cohort being analysed (with case/control phenotype). Individuals with missing phenotypes not used to compute the pairwise correlations should be excluded from this file.                                               |
+| `$COHORT_$LOCUS.cor.gz` | 1x `LDSTORE v1.1` .cor file (compressed output of *–table* flag) for each cohort being analysed. Output of the `PLINK v1.9+` *–r inter-chr gz* flag (`$COHORT_$LOCUS.ld.gz`) is also acceptable if the `$COR_FORMAT` argument is changed as described below. |
 
 Single-cohort names (`$COHORT`) should be unique but can contain any
-non-whitespace characters. Note the underscore ("\_") separation with
-`$LOCUS`.
+non-whitespace characters. The underscore ("\_") separation with
+`$LOCUS` is mandatory.
+
+## Changing weights and correlation in-files
+
+The other two arguments of the script do not have to be used, they are
+optional:
+
+`$COR_FORMAT` indicates whether the input correlations have been
+computed with *“LDSTORE”* or *“PLINK”*, allowing the script to correctly
+process these files. Defaults to *“LDSTORE”* if not explicit.
+
+`$ESS_FORMULA` indicates how to compute the effective sample size used
+as weight of each LD matrix. Options are *“Willer2010”* for the formula
+used in [METAL](https://doi.org/10.1093/bioinformatics/btq340) or
+*“Vukcevic2011”* for a derivation based on the [Non-Centrality
+Parameter](https://doi.org/10.1002/gepi.20576) of logistic regression.
+Defaults to *“Willer2010”* if not explicit.
+
+Note that if these last two arguments are used, they have to be used
+**in the order above**. This implies that to change the `$ESS_FORMULA`
+argument one needs to be explicit and state the value of `$COR_FORMAT`
+as well (but the converse is not true).
 
 ## Output files
 
-| Filename             | Contents                                                                                                       |
-| -------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `$LOCUS.ld`          | Square consensus LD matrix. SNPs are given on the same order as `$LOCUS.ref`.                                  |
-| `$LOCUS.snps.log`    | SNPs used in the computation of the consensus LD matrix. Should match those on `$LOCUS.ref`.                   |
-| `$LOCUS.samples.log` | Cohorts used in the computation of the consensus LD matrix. Should match all of those provided as input files. |
+| Filename             | Contents                                                                                                                                                            |
+|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `$LOCUS.ld`          | Square consensus LD matrix. SNPs are given on the same order as `$LOCUS.ref`.                                                                                       |
+| `$LOCUS.snps.log`    | SNPs used in the computation of the consensus LD matrix. Should match those on `$LOCUS.ref`.                                                                        |
+| `$LOCUS.samples.log` | Cohorts used in the computation of the consensus LD matrix. Should match all of those provided as input files.                                                      |
+| `$LOCUS.heatmap.png` | Basic illustration of the consensus LD structure at the locus. Only intended for troubleshooting or to identify regions that could be problematic for fine-mapping. |
 
-<!--## Testing
+## Testing
 
-The `./test/` folder contains some simulated input/output files that can be used to conduct a reproducible run.-->
+The [`./test/`](test/) folder contains some input/output files that can
+be used to conduct a reproducible run. For illustration purposes, these
+files include the region around exon 12 of the
+[EDAR](https://www.genecards.org/cgi-bin/carddisp.pl?gene=EDAR) gene,
+which contains some very strong linkage as previously discussed by
+[Sabeti et al. 2007](https://dx.doi.org/10.1038%2Fnature06250).
+Genotypes were derived from polymorphic SNPs from four subpopulations
+(Europeans, Sub-Saharan Africans, East Asians and Native Americans) of
+the public
+[HGDP](ftp://ngs.sanger.ac.uk/production/hgdp/hgdp_wgs.20190516/)
+dataset. Please reference [Bergström et
+al. 2020](dx.doi.org/10.1126/science.aay5012) if you find this data
+useful for other purposes.
+
+## Assumptions
+
+`LDmergeFM` has been designed with fine-mapping in a meta-analytic GWAS
+setting in mind, so one of its implicit requirements (in line with
+[FINEMAP](https://doi.org/10.1093/bioinformatics/btw018)) is that the
+reference allele for the correlations is the **same** in all cohorts.
+Given that inconsistent criteria are currently used to decide
+effect/reference alleles, it can help to set these explictly using the
+`PLINK` *–a1-allele*/*–ref-allele* flag, which in fact can accept the
+format of the `$LOCUS.ref` file.
+
+For a similar reason, `LDmergeFM` expects that all SNPs in the
+`$LOCUS.ref` file will be uniquely named and that each of them can be
+found in the correlation file of **at least** one cohort. Duplicated or
+missing SNPs might cause the script to fail silently, returning
+erroneous output, so please ensure these are not present.
 
 ## Notes
 
-`LDmergeFM` has not been tested with correlation table file from
-`LDSTORE v2+`, please conduct a test run before using these in important
+`LDmergeFM` has not been tested with correlation table files from
+`LDSTORE v2+`, please conduct a test run before using those in important
 analyses.
 
 `LDmergeFM` can work with an arbitrary number of input matrices but in
@@ -66,6 +117,15 @@ matrix has used all available data.
 matrices are needed (e.g. for trans-ancestry fine-mapping purposes) you
 should run the script separately for each group of single-ancestry
 inputs.
+
+## Major version history
+
+**2021-03-09** =&gt; *Added assertion checks for better error reporting.
+Introduced arguments to accommodate other correlation file formats and
+change the calculation for effective sample size weights if desired.*
+
+**2020-11-13** =&gt; *Upload of initial version with essential
+functionality.*
 
 ## Citation
 

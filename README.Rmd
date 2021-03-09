@@ -50,7 +50,7 @@ Note that if these last two arguments are used, they have to be used **in the or
 
 ## Testing
 
-The `./test/` folder contains some input/output files that can be used to conduct a reproducible run. For illustration purposes, these files include the region around exon 12 of the [EDAR](https://www.genecards.org/cgi-bin/carddisp.pl?gene=EDAR) gene, which contains some very strong linkage as previously discussed by [Sabeti et al. 2007](https://dx.doi.org/10.1038%2Fnature06250). Genotypes were derived from polymorphic SNPs from four subpopulations (Europeans, Sub-Saharan Africans, East Asians and Native Americans) of the public [HGDP](ftp://ngs.sanger.ac.uk/production/hgdp/hgdp_wgs.20190516/) dataset. Please reference [Bergström et al. 2020](dx.doi.org/10.1126/science.aay5012) if you find this data useful for other purposes.
+The [`./test/`](test/) folder contains some input/output files that can be used to conduct a reproducible run. For illustration purposes, these files include the region around exon 12 of the [EDAR](https://www.genecards.org/cgi-bin/carddisp.pl?gene=EDAR) gene, which contains some very strong linkage as previously discussed by [Sabeti et al. 2007](https://dx.doi.org/10.1038%2Fnature06250). Genotypes were derived from polymorphic SNPs from four subpopulations (Europeans, Sub-Saharan Africans, East Asians and Native Americans) of the public [HGDP](ftp://ngs.sanger.ac.uk/production/hgdp/hgdp_wgs.20190516/) dataset. Please reference [Bergström et al. 2020](dx.doi.org/10.1126/science.aay5012) if you find this data useful for other purposes.
 
 ## Assumptions
 
@@ -66,6 +66,12 @@ For a similar reason, `LDmergeFM` expects that all SNPs in the `$LOCUS.ref` file
 
 `LDmergeFM` is not ancestry-aware. If ancestry-specific consensus matrices are needed (e.g. for trans-ancestry fine-mapping purposes) you should run the script separately for each group of single-ancestry inputs.
 
+## Major version history
+
+**2021-03-09** => *Added assertion checks for better error reporting. Introduced arguments to accommodate other correlation file formats and change the calculation for effective sample size weights if desired.*
+
+**2020-11-13** => *Upload of initial version with essential functionality.*
+
 ## Citation
 
 If this script is helpful for your work, just reference the main [PGC3-SCZ](https://doi.org/10.1101/2020.09.12.20192922) paper. If it ends up being *very* helpful, please let me know so I can keep fighting impostor syndrome one day at a time :relieved:.
@@ -73,8 +79,3 @@ If this script is helpful for your work, just reference the main [PGC3-SCZ](http
 ## Contact
 
 Please submit suggestions and bug-reports at https://github.com/pintaius/LDmergeFM/issues.
-
-## Version history
-
-**2021-03-09** => *Added assertion checks for better error reporting. Introduced arguments to accommodate other correlation file formats and change the calculation for effective sample size weights.*
-**2020-11-13** => *Upload of initial version with essential functionality.*
