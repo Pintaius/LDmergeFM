@@ -5,9 +5,9 @@
 
 This script contains an implementation in R of a weighted average
 procedure to generate consensus locus-specific LD matrices from multiple
-single-cohort [LDSTORE](http://www.christianbenner.com/) files. Together
-with [FINEMAP](https://doi.org/10.1093/bioinformatics/btw018), it has
-been used in the generation of the
+single-cohort correlation files. Together with
+[FINEMAP](https://doi.org/10.1093/bioinformatics/btw018), it has been
+used in the generation of the
 [PGC3-SCZ](https://doi.org/10.1101/2020.09.12.20192922) fine-mapping
 results.
 
@@ -37,7 +37,7 @@ Single-cohort names (`$COHORT`) should be unique but can contain any
 non-whitespace characters. The underscore ("\_") separation with
 `$LOCUS` is mandatory.
 
-## Changing weights and correlation in-files
+## Changing cohort weights and correlation file format
 
 The other two arguments of the script do not have to be used, they are
 optional:
@@ -54,9 +54,9 @@ Parameter](https://doi.org/10.1002/gepi.20576) of logistic regression.
 Defaults to *“Willer2010”* if not explicit.
 
 Note that if these last two arguments are used, they have to be used
-**in the order above**. This implies that to change the `$ESS_FORMULA`
-argument one needs to be explicit and state the value of `$COR_FORMAT`
-as well (but the converse is not true).
+**in the order above**. This implies that to change `$ESS_FORMULA` one
+needs to be explicit and state the value of `$COR_FORMAT` as well (but
+the converse is not true).
 
 ## Output files
 
@@ -85,11 +85,11 @@ useful for other purposes.
 
 ## Assumptions
 
-`LDmergeFM` has been designed with fine-mapping in a meta-analytic GWAS
-setting in mind, so one of its implicit requirements (in line with
-[FINEMAP](https://doi.org/10.1093/bioinformatics/btw018)) is that the
-reference allele for the correlations is the **same** in all cohorts.
-Given that inconsistent criteria are currently used to decide
+`LDmergeFM` has been designed with fine-mapping in a meta-analytic
+case-control GWAS setting in mind, so one of its implicit requirements
+(in line with [FINEMAP](https://doi.org/10.1093/bioinformatics/btw018))
+is that the reference allele for the correlations is the **same** in all
+cohorts. Given that inconsistent criteria are currently used to decide
 effect/reference alleles, it can help to set these explictly using the
 `PLINK` *–a1-allele*/*–ref-allele* flag, which in fact can accept the
 format of the `$LOCUS.ref` file.
@@ -126,6 +126,12 @@ change the calculation for effective sample size weights if desired.*
 
 **2020-11-13** =&gt; *Upload of initial version with essential
 functionality.*
+
+## Additional software
+
+`FINEMAP`/`LDSTORE`: <http://www.christianbenner.com/>
+
+`PLINK`: <https://www.cog-genomics.org/plink/1.9/>
 
 ## Citation
 
