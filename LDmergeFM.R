@@ -1,13 +1,41 @@
-# Load locus number
-LOCUS <- commandArgs(trailingOnly = TRUE)
+# Load arguments
+script.flags <- commandArgs(trailingOnly = TRUE)
+script.flags.n <- length(script.flags)
+LOCUS <- script.flags[1]
+cor.format <-
+  if (script.flags.n < 2) {
+    "LDSTORE"
+  } else {
+    script.flags[2]
+  }
+neff.formula <-
+  if (script.flags.n < 3) {
+    "Willer2010"
+  } else {
+    script.flags[3]
+  }
 
-# Load required libraries (updated CRAN versions as of 01/09/18)
+# Load required libraries (CRAN versions after 01/09/18 will do)
 suppressMessages(library("methods"))
 suppressMessages(library("readr"))
 suppressMessages(library("dplyr"))
 suppressMessages(library("purrr"))
 suppressMessages(library("reshape2"))
 suppressMessages(library("Matrix"))
+
+# Assertions
+if (script.flags.n > 3) {
+  stop("Too many arguments for script to understand.")
+}
+if (!file.exists(paste0(LOCUS, ".ref"))) {
+  stop("Effect allele reference file not found, check locus name.")
+}
+if (!(neff.formula %in% c("Willer2010", "Vukcevic2011"))) {
+  stop("Invalid option for sample size formula.")
+}
+if (!(cor.format %in% c("LDSTORE", "PLINK"))) {
+  stop("Invalid option for correlation matrix format.")
+}
 
 # Load list of SNPs in locus
 SNP <-
@@ -18,7 +46,11 @@ SNP <-
   ))
 
 # Load correlation files into a list
+if (cor.format=="LDSTORE"){
 corfile <- Sys.glob(paste0("*", LOCUS, ".cor.gz"))
+if (length(corfile) < 2) {
+  stop("Fewer than two correlation matrices found, check locus name.")
+}
 samplevec <-
   unlist(strsplit(corfile, paste0("_", LOCUS, ".cor.gz")))
 LDlist <-
@@ -28,7 +60,32 @@ LDlist <-
            RSID1 = "c",
            RSID2 = "c",
            correlation = "d"
-         ))
+         ))}
+if (cor.format=="PLINK") {
+  corfile <- Sys.glob(paste0("*", LOCUS, ".ld.gz"))
+  if (length(corfile) < 2) {
+    stop("Fewer than two correlation matrices found, check locus name.")
+  }
+  samplevec <-
+    unlist(strsplit(corfile, paste0("_", LOCUS, ".ld.gz")))
+  LDlist <-
+    suppressWarnings(lapply(
+      corfile,
+      read_table2,
+      col_types = cols_only(
+        SNP_A = "c",
+        SNP_B = "c",
+        R = "d"
+      )
+    ))
+  LDlist <-
+    LDlist %>% map( ~ rename(
+      .x,
+      RSID1 = SNP_A,
+      RSID2 = SNP_B,
+      correlation = R
+    ))
+}
 names(LDlist) <- samplevec
 
 # Expand correlation items to cover all pairwise SNP combinations
@@ -50,6 +107,9 @@ LDlist <- lapply(LDlist, expand.cor, snplist = SNP)
 
 # Load fam files into a list
 famfile <- Sys.glob(paste0("*", LOCUS, ".fam"))
+if (length(famfile) < 2) {
+  stop("Fewer than two .fam files found, check locus name.")
+}
 famlist <-
   lapply(
     famfile,
@@ -59,17 +119,18 @@ famlist <-
     colClasses = c("NULL", "NULL", "NULL", "NULL", "NULL", "integer")
   )
 names(famlist) <- samplevec
-famlist <-
+famlist.pheno <-
   lapply(famlist, function(x)
     x[!is.na(x)]) # This transforms each element into a phenotype vector
 
 # Calculate effective sample sizes
 neffvec <- samplevec
 for (sample in samplevec) {
-  ntot <- length(famlist[[sample]])
-  ncas <- sum(famlist[[sample]] == 2)
-  neff <- 4 / (1 / ncas + 1 / (ntot - ncas)) # METAL formula
-  # neff <- ntot*(ncas/ntot)*(1-(ncas/ntot)) # Matti's formula
+  ntot <- dim(famlist[[sample]])[1] # Takes into account missing phenotypes if used to calculate R2
+  ncas <- sum(famlist.pheno[[sample]] == 2)
+  if(ncas==0){ncas<-round(ntot/2)}
+  if(neff.formula=="Willer2010") {neff <- 4 / (1 / ncas + 1 / (ntot - ncas))}
+  if(neff.formula=="Vukcevic2011") {neff <- ntot*(ncas/ntot)*(1-(ncas/ntot))}
   neffvec[neffvec == sample] <- neff
 }
 
@@ -111,6 +172,12 @@ write.table(
   col.names = F,
   row.names = F
 )
+
+# Generate heatmap
+heat.pal <- colorRampPalette(c("#d73027", "#fc8d59", "#fee090","#ffffbf","#e0f3f8","#91bfdb","#4575b4"))(256)
+png(filename=paste0(LOCUS, ".heatmap.png"),type="cairo",width=4800,height=3200,pointsize=16,res=300)
+heatmap(LDmatrix, Colv = NA, Rowv = NA, col = col, scale = "none",symm=T,labRow = F,labCol = F)
+dev.off()
 
 # Log files used in computing correlations
 options(max.print = 1000000)
