@@ -174,10 +174,11 @@ write.table(
 )
 
 # Generate heatmap
+if (capabilities()["png"]==T) {
 heat.pal <- colorRampPalette(c("#d73027", "#fc8d59", "#fee090","#ffffbf","#e0f3f8","#91bfdb","#4575b4"))(256)
-png(filename=paste0(LOCUS, ".heatmap.png"),type="cairo",width=4800,height=3200,pointsize=16,res=300)
+png(filename=paste0(LOCUS, ".heatmap.png"),type="cairo",width=4800,height=4800,pointsize=16,res=300)
 heatmap(LDmatrix, Colv = NA, Rowv = NA, col = col, scale = "none",symm=T,labRow = F,labCol = F)
-dev.off()
+dev.off()}
 
 # Log files used in computing correlations
 options(max.print = 1000000)

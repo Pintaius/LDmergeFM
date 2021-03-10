@@ -60,12 +60,12 @@ the converse is not true).
 
 ## Output files
 
-| Filename             | Contents                                                                                                                                                            |
-|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `$LOCUS.ld`          | Square consensus LD matrix. SNPs are given on the same order as `$LOCUS.ref`.                                                                                       |
-| `$LOCUS.snps.log`    | SNPs used in the computation of the consensus LD matrix. Should match those on `$LOCUS.ref`.                                                                        |
-| `$LOCUS.samples.log` | Cohorts used in the computation of the consensus LD matrix. Should match all of those provided as input files.                                                      |
-| `$LOCUS.heatmap.png` | Basic illustration of the consensus LD structure at the locus. Only intended for troubleshooting or to identify regions that could be problematic for fine-mapping. |
+| Filename             | Contents                                                                                                                                                                                                            |
+|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `$LOCUS.ld`          | Square consensus LD matrix. SNPs are given on the same order as `$LOCUS.ref`.                                                                                                                                       |
+| `$LOCUS.snps.log`    | SNPs used in the computation of the consensus LD matrix. Should match those on `$LOCUS.ref`.                                                                                                                        |
+| `$LOCUS.samples.log` | Cohorts used in the computation of the consensus LD matrix. Should match all of those provided as input files.                                                                                                      |
+| `$LOCUS.heatmap.png` | Basic illustration of the consensus LD structure at the locus. Intended for troubleshooting or to identify regions that could be problematic for fine-mapping. Only generated if R installation has PNG capability. |
 
 ## Testing
 
@@ -122,7 +122,8 @@ inputs.
 
 **2021-03-09** =&gt; *Added assertion checks for better error reporting.
 Introduced arguments to accommodate other correlation file formats and
-change the calculation for effective sample size weights if desired.*
+change the calculation for effective sample size weights if desired. New
+basic heatmap output.*
 
 **2020-11-13** =&gt; *Upload of initial version with essential
 functionality.*
