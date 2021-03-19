@@ -39,19 +39,19 @@ non-whitespace characters. The underscore ("\_") separation with
 
 ## Changing cohort weights and correlation file format
 
-The other two arguments of the script do not have to be used, they are
-optional:
+The other two arguments of the script are optional:
 
 `$COR_FORMAT` indicates whether the input correlations have been
 computed with *“LDSTORE”* or *“PLINK”*, allowing the script to correctly
 process these files. Defaults to *“LDSTORE”* if not explicit.
 
 `$ESS_FORMULA` indicates how to compute the effective sample size used
-as weight of each LD matrix. Options are *“Willer2010”* for the formula
-used in [METAL](https://doi.org/10.1093/bioinformatics/btq340) or
-*“Vukcevic2011”* for a derivation based on the [Non-Centrality
-Parameter](https://doi.org/10.1002/gepi.20576) of logistic regression.
-Defaults to *“Willer2010”* if not explicit.
+as weight of each LD matrix. Options are *“METAL”* for the formula used
+in [Willer et al. 2010](https://doi.org/10.1093/bioinformatics/btq340)
+or *“NCP”* for the definition of [Matti
+Pirinen](https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/material/GWAS3.html)
+and [Vukcevic et al. 2011](https://doi.org/10.1002/gepi.20576). Defaults
+to *“METAL”* if not explicit.
 
 Note that if these last two arguments are used, they have to be used
 **in the order above**. This implies that to change `$ESS_FORMULA` one
@@ -80,8 +80,8 @@ Genotypes were derived from polymorphic SNPs from four subpopulations
 the public
 [HGDP](ftp://ngs.sanger.ac.uk/production/hgdp/hgdp_wgs.20190516/)
 dataset. Please reference [Bergström et
-al. 2020](dx.doi.org/10.1126/science.aay5012) if you find this data
-useful for other purposes.
+al. 2020](https://dx.doi.org/10.1126/science.aay5012) if you find this
+data useful for other purposes.
 
 ## Assumptions
 
@@ -120,10 +120,10 @@ inputs.
 
 ## Major version history
 
-**2021-03-09** =&gt; *Added assertion checks for better error reporting.
-Introduced arguments to accommodate other correlation file formats and
-change the calculation for effective sample size weights if desired. New
-basic heatmap output.*
+**2021-03-09** =&gt; *Added some internal checks for better error
+reporting. Introduced arguments to accommodate other correlation file
+formats and change the calculation for effective sample size weights if
+desired. New basic heatmap output.*
 
 **2020-11-13** =&gt; *Upload of initial version with essential
 functionality.*

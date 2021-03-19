@@ -31,11 +31,11 @@ Single-cohort names (`$COHORT`) should be unique but can contain any non-whitesp
 
 ## Changing cohort weights and correlation file format
 
-The other two arguments of the script do not have to be used, they are optional: 
+The other two arguments of the script are optional: 
 
 `$COR_FORMAT` indicates whether the input correlations have been computed with *"LDSTORE"* or *"PLINK"*, allowing the script to correctly process these files. Defaults to *"LDSTORE"* if not explicit.
 
-`$ESS_FORMULA` indicates how to compute the effective sample size used as weight of each LD matrix. Options are *"Willer2010"* for the formula used in [METAL](https://doi.org/10.1093/bioinformatics/btq340) or *"Vukcevic2011"* for a derivation based on the [Non-Centrality Parameter](https://doi.org/10.1002/gepi.20576) of logistic regression. Defaults to *"Willer2010"* if not explicit. 
+`$ESS_FORMULA` indicates how to compute the effective sample size used as weight of each LD matrix. Options are *"METAL"* for the formula used in [Willer et al. 2010](https://doi.org/10.1093/bioinformatics/btq340) or *"NCP"* for the definition of [Matti Pirinen](https://www.mv.helsinki.fi/home/mjxpirin/GWAS_course/material/GWAS3.html) and [Vukcevic et al. 2011](https://doi.org/10.1002/gepi.20576). Defaults to *"METAL"* if not explicit. 
 
 Note that if these last two arguments are used, they have to be used **in the order above**. This implies that to change `$ESS_FORMULA` one needs to be explicit and state the value of `$COR_FORMAT` as well (but the converse is not true).
 
@@ -50,7 +50,7 @@ Note that if these last two arguments are used, they have to be used **in the or
 
 ## Testing
 
-The [`./test/`](test/) folder contains some input/output files that can be used to conduct a reproducible run. For illustration purposes, these files include the region around exon 12 of the [EDAR](https://www.genecards.org/cgi-bin/carddisp.pl?gene=EDAR) gene, which contains some very strong linkage as previously discussed by [Sabeti et al. 2007](https://dx.doi.org/10.1038%2Fnature06250). Genotypes were derived from polymorphic SNPs from four subpopulations (Europeans, Sub-Saharan Africans, East Asians and Native Americans) of the public [HGDP](ftp://ngs.sanger.ac.uk/production/hgdp/hgdp_wgs.20190516/) dataset. Please reference [Bergström et al. 2020](dx.doi.org/10.1126/science.aay5012) if you find this data useful for other purposes.
+The [`./test/`](test/) folder contains some input/output files that can be used to conduct a reproducible run. For illustration purposes, these files include the region around exon 12 of the [EDAR](https://www.genecards.org/cgi-bin/carddisp.pl?gene=EDAR) gene, which contains some very strong linkage as previously discussed by [Sabeti et al. 2007](https://dx.doi.org/10.1038%2Fnature06250). Genotypes were derived from polymorphic SNPs from four subpopulations (Europeans, Sub-Saharan Africans, East Asians and Native Americans) of the public [HGDP](ftp://ngs.sanger.ac.uk/production/hgdp/hgdp_wgs.20190516/) dataset. Please reference [Bergström et al. 2020](https://dx.doi.org/10.1126/science.aay5012) if you find this data useful for other purposes.
 
 ## Assumptions
 
@@ -68,7 +68,7 @@ For a similar reason, `LDmergeFM` expects that all SNPs in the `$LOCUS.ref` file
 
 ## Major version history
 
-**2021-03-09** => *Added assertion checks for better error reporting. Introduced arguments to accommodate other correlation file formats and change the calculation for effective sample size weights if desired. New basic heatmap output.*
+**2021-03-09** => *Added some internal checks for better error reporting. Introduced arguments to accommodate other correlation file formats and change the calculation for effective sample size weights if desired. New basic heatmap output.*
 
 **2020-11-13** => *Upload of initial version with essential functionality.*
 

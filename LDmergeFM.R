@@ -10,7 +10,7 @@ cor.format <-
   }
 neff.formula <-
   if (script.flags.n < 3) {
-    "Willer2010"
+    "METAL"
   } else {
     script.flags[3]
   }
@@ -30,7 +30,7 @@ if (script.flags.n > 3) {
 if (!file.exists(paste0(LOCUS, ".ref"))) {
   stop("Effect allele reference file not found, check locus name.")
 }
-if (!(neff.formula %in% c("Willer2010", "Vukcevic2011"))) {
+if (!(neff.formula %in% c("METAL", "NCP"))) {
   stop("Invalid option for sample size formula.")
 }
 if (!(cor.format %in% c("LDSTORE", "PLINK"))) {
@@ -129,8 +129,8 @@ for (sample in samplevec) {
   ntot <- dim(famlist[[sample]])[1] # Takes into account missing phenotypes if used to calculate R2
   ncas <- sum(famlist.pheno[[sample]] == 2)
   if(ncas==0){ncas<-round(ntot/2)}
-  if(neff.formula=="Willer2010") {neff <- 4 / (1 / ncas + 1 / (ntot - ncas))}
-  if(neff.formula=="Vukcevic2011") {neff <- ntot*(ncas/ntot)*(1-(ncas/ntot))}
+  if(neff.formula=="METAL") {neff <- 4 / (1 / ncas + 1 / (ntot - ncas))}
+  if(neff.formula=="NCP") {neff <- ntot*(ncas/ntot)*(1-(ncas/ntot))}
   neffvec[neffvec == sample] <- neff
 }
 
